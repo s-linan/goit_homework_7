@@ -132,13 +132,16 @@ def main(folder: Path):
         handle_folder(folder)
 
 def start():
-    if sys.argv[1]:
-        folder_for_scan = Path(sys.argv[1])
-        print(f'Start in folder {folder_for_scan.resolve()}')
-        main(folder_for_scan.resolve())
-
-if __name__ == '__main__':
-    if sys.argv[1]:
-        folder_for_scan = Path(sys.argv[1])
-        print(f'Start in folder: {folder_for_scan.resolve()}')
-        main(folder_for_scan.resolve())
+    try:
+        if len(sys.argv) > 2:
+            print('Enter only one destination/folder name!')
+        elif len(sys.argv) < 2:
+            print('Enter destination/folder name!')
+        else:
+            folder_for_scan = Path(sys.argv[1])
+            print(f'Start in folder {folder_for_scan.resolve()}')
+            main(folder_for_scan.resolve())
+    except IndexError:
+        print('Missing folder name!')
+    except FileNotFoundError:
+        print('Folder not found!')
