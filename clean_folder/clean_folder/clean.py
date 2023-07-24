@@ -3,6 +3,17 @@ import shutil
 import re
 import sys
 
+def start():
+    if len(sys.argv) < 2:
+        print('Enter destination/folder name!')
+        return
+    folder_for_scan = Path(sys.argv[1])
+    print(f'Start in folder {folder_for_scan.resolve()}')
+    try:
+        main(folder_for_scan.resolve())
+    except FileNotFoundError:
+        print('Folder not found!')
+
 IMAGES = []
 VIDEOS = []
 DOCUMENTS = []
@@ -24,8 +35,6 @@ UNKNOWN = set()
 
 def get_extension(filename: str) -> str:
     return Path(filename).suffix[1:].upper() # перетворюємо розширення файлу на назву папки .jpg -> JPG (суфікс[1:] пропускає 1 символ, тобто крапку)
-
-
 
 def scan(folder: Path) -> None:
     for item in folder.iterdir():
@@ -51,21 +60,6 @@ def scan(folder: Path) -> None:
                 # якщо не зареєстрували розширення у REGISTER_EXTENSION, то додаємо до невідомих
                 UNKNOWN.add(ext)
                 OTHER.append(fullname)
-
-if __name__ == "__main__":
-    folder_to_scan = sys.argv[1]
-    print(f'Start in folder {folder_to_scan}')
-    scan(Path(folder_to_scan))
-    print(f'Images: {IMAGES}')
-    print(f'Videos: {VIDEOS}')
-    print(f'Documents: {DOCUMENTS}')
-    print(f'Audio: {AUDIO}')
-    print(f'Archives: {ARCHIVES}')
-    print(f'Other: {OTHER}')
-    print(f'Types of files in folder: {EXTENSION}')
-    print(f'Unknown files of types: {UNKNOWN}')
-    print(FOLDERS[::-1]) # виводить усі знайдені папки у нашій папці
-
 
 CYRILLIC_SYMBOLS = "абвгдеёжзийклмнопрстуфхцчшщъыьэюяєіїґ"
 TRANSLATION = ("a", "b", "v", "g", "d", "e", "e", "j", "z", "i", "j", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u",
@@ -131,17 +125,18 @@ def main(folder: Path):
     for folder in FOLDERS[::-1]:
         handle_folder(folder)
 
-def start():
-    try:
-        if len(sys.argv) > 2:
-            print('Enter only one destination/folder name!')
-        elif len(sys.argv) < 2:
-            print('Enter destination/folder name!')
-        else:
-            folder_for_scan = Path(sys.argv[1])
-            print(f'Start in folder {folder_for_scan.resolve()}')
-            main(folder_for_scan.resolve())
-    except IndexError:
-        print('Missing folder name!')
-    except FileNotFoundError:
-        print('Folder not found!')
+if len(sys.argv) == 2:
+    folder_to_scan = sys.argv[1]
+    print(f'Start in folder {folder_to_scan}')
+    scan(Path(folder_to_scan))
+    print(f'Images: {IMAGES}')
+    print(f'Videos: {VIDEOS}')
+    print(f'Documents: {DOCUMENTS}')
+    print(f'Audio: {AUDIO}')
+    print(f'Archives: {ARCHIVES}')
+    print(f'Other: {OTHER}')
+    print(f'Types of files in folder: {EXTENSION}')
+    print(f'Unknown files of types: {UNKNOWN}')
+    print(FOLDERS[::-1]) # виводить усі знайдені папки у нашій папці
+
+
